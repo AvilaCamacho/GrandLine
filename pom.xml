@@ -1,0 +1,126 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>mx.edu.utez</groupId>
+    <artifactId>GrandLine-wrapper</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>GrandLine (Gradle wrapper via Maven)</name>
+    <description>Pom wrapper que permite invocar el Gradle Wrapper desde Maven. No convierte el proyecto Android a Maven (no recomendado para Android moderno).</description>
+
+    <profiles>
+        <!-- Perfil para Windows: ejecuta gradlew.bat -->
+        <profile>
+            <id>gradle-build-windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>run-gradle-wrapper-windows</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>cmd</executable>
+                                    <arguments>
+                                        <argument>/c</argument>
+                                        <argument>gradlew.bat</argument>
+                                        <argument>clean</argument>
+                                        <argument>assembleDebug</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Perfil para Unix-like: ejecuta ./gradlew -->
+        <profile>
+            <id>gradle-build-unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>run-gradle-wrapper-unix</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${project.basedir}/gradlew</executable>
+                                    <arguments>
+                                        <argument>clean</argument>
+                                        <argument>assembleDebug</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Perfil manual que no depende de OS; activa el que prefieras -->
+        <profile>
+            <id>gradle-build</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>run-gradle-wrapper-generic</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>sh</executable>
+                                    <arguments>
+                                        <argument>-c</argument>
+                                        <argument>./gradlew clean assembleDebug || cmd /c gradlew.bat clean assembleDebug</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <finalName>GrandLine-wrapper</finalName>
+    </build>
+
+</project>
+
