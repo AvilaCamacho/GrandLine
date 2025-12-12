@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
             MaterialTheme {
                 Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
-                    // Llamada directa a Navigation (evitar try/catch en composición)
+                    //abre directamente la navegacion
                     Navigation(loginViewModelFactory = loginFactory)
                 }
             }
