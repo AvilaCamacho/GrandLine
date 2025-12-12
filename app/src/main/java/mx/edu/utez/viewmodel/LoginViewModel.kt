@@ -45,7 +45,7 @@ class LoginViewModel(private val repo: UserRepository) : ViewModel() {
             if (res.isSuccess) {
                 onSuccess()
             } else {
-                _regError.value = res.exceptionOrNull()?.message ?: "Error al registrar"
+                _regError.value = res.exceptionOrNull()?.message ?: "Error al registar el usuario"
             }
         }
     }

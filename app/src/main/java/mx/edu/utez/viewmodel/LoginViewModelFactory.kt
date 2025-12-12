@@ -10,6 +10,6 @@ class LoginViewModelFactory(private val userRepository: UserRepository) : ViewMo
             @Suppress("UNCHECKED_CAST")
             return LoginViewModel(userRepository) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("NO se reconoce el ViewModel")
     }
 }
