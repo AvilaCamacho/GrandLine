@@ -79,17 +79,28 @@ El ejecutable firmado (.apk) se encuentra disponible en la sección de **Release
 ---
 
 ## Estructura del Proyecto (sugerida)
-
-- app/
-  - src/main/java/... (paquetes)
-  - src/main/res/
-  - AndroidManifest.xml
-- data/ (modelos, repositorios)
-- ui/ (composables, screens)
-- di/ (dependencias, Hilt/Koin)
-- docs/ (capturas, diagramas)
-- build.gradle (configuración)
-
+app/
+src/main/java/mx/edu/utez/
+data/
+model/ (clases de datos como User y Message)
+network/ (servicios de red y modelos de request/response)
+repository/ (repositorios que conectan ViewModel con la API)
+storage/ (manejo de token, preferencias y DataStore)
+grabadorMultimedia.data/
+local/ (manejo de sesión local)
+remote/ (cliente Retrofit, API y acceso a datos remotos)
+dto/ (objetos de transferencia de datos)
+ui/
+components/ (componentes reutilizables como TopBar)
+screens/ (pantallas principales de la app)
+theme/ (tema, colores y estilos)
+Navigation.kt (navegación entre pantallas)
+viewmodel/
+(ViewModels y Factorys para cada pantalla)
+MainActivity.kt (punto de entrada de la aplicación)
+src/main/res/ (recursos gráficos y configuraciones)
+AndroidManifest.xml (configuración general de la app)
+build.gradle (configuración del proyecto y dependencias)
 ---
 
 ## Cómo contribuir
