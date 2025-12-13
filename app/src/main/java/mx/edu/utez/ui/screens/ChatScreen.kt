@@ -214,6 +214,37 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
                                         })
                                     }
                                 }
+                                
+                                // Add Delete Audio button (only for own messages)
+                                if (isMine) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Button(
+                                        onClick = {
+                                            scope.launch {
+                                                try {
+                                                    val res = repo.deleteAudio(msg.id)
+                                                    if (res.isSuccess) {
+                                                        snackbarHost.showSnackbar("Audio eliminado")
+                                                        loadMessages()
+                                                    } else {
+                                                        val err = res.exceptionOrNull()?.message ?: "Error desconocido"
+                                                        // Clean HTML and limit message length
+                                                        val clean = err.replace(Regex("<[^>]+>"), " ").replace(Regex("\\s+"), " ").trim()
+                                                        val short = if (clean.length > 200) clean.substring(0, 200) + "..." else clean
+                                                        snackbarHost.showSnackbar(short)
+                                                        android.util.Log.d("ChatScreen", "Delete audio error full: $err")
+                                                    }
+                                                } catch (e: Exception) {
+                                                    e.printStackTrace()
+                                                    snackbarHost.showSnackbar("Error: ${e.message}")
+                                                }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                                    ) {
+                                        Text("Borrar audio", color = Color.White)
+                                    }
+                                }
                             }
 
                             msg.timestamp?.let { Text(it, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.End) }
