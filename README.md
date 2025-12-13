@@ -14,62 +14,53 @@ Repo ID: 1114529269
 
 | Nombre Completo | Rol / Tareas Principales | Usuario GitHub |
 | :--- | :--- | :--- |
-| [Nombre del Alumno 1] | [Ej. UI Design, Repositorio] | @usuario1 |
-| [Nombre del Alumno 2] | [Ej. Backend, Retrofit] | @usuario2 |
-| [Nombre del Alumno 3] | [Ej. Sensores, Lógica] | @usuario3 |
+| [ANGEL GILBERTO AVILA LOPEZ] | [BACK-END, SERVERVER CONECCION] | @usuario1 |
+| [ROBERTO CARLOS ESPINOZA JIMEEZ] | [FRONT-END] | @Robertin2102 |
+| [MIGUEL EMILIANO BASILIO GARDEA] | [DOCUMENTACION] | @Emliano520 |
 
 ---
 
 ## Descripción del Proyecto
 
-**¿Qué hace la aplicación?**  
-[Escribe aquí una descripción clara de tu proyecto. Explica qué problema resuelve, a quién va dirigida y cuál es su funcionalidad principal.]
-
+**¿Qué hace la aplicación?**  AP
+APP TIPO WASAP QUE PERMITE TENER CHATS CON USUARIOS REGISTRADOS, AL DAR CLICK EN UN USUARIO ABRIRAA UN CHAT PERSONAL ENTRE LOS DOS USUARIOS QUE PERMITE PRIVACIDAD ENTRE CHATS, SOLO PUEDE ENVIAR MENSAJE DE VOZ EN LOS CHATS TANTO
+TANTO QUIEN LO ENVIA COMO QUIEN LO RECIBE PUEDE ESCUCHAR EL AUDIO
 **Objetivo:**  
-Demostrar la implementación de una arquitectura robusta en Android utilizando servicios web y hardware del dispositivo.
-
----
-
+Demostrar la implementación de una arquitectura robusta en Android utilizando servicios hardware del dispositivo.
+-USO DE MICROFONO
 ## Stack Tecnológico y Características
-
+-PHYTON SERVER PARA LA API
 Este proyecto ha sido desarrollado siguiendo estrictamente los lineamientos de la materia:
-
 - **Lenguaje:** Kotlin 100%.
 - **Interfaz de Usuario:** Jetpack Compose.
 - **Arquitectura:** MVVM (Model-View-ViewModel).
 - **Conectividad (API REST):** Retrofit.
-  - **GET:** [Explica brevemente qué datos obtienes]
-  - **POST:** [Explica qué datos envías/creas]
-  - **UPDATE:** [Explica qué se actualiza]
-  - **DELETE:** [Explica qué se borra]
-- **Sensor Integrado:** [Menciona aquí el sensor usado: Ej. Cámara, GPS, Giroscopio]
-  - Uso: [Explica brevemente para qué se usa el sensor en la app]
-- **Persistencia local:** [Room / DataStore / SharedPreferences — selecciona y describe]
+  - **GET:** [TIPO MEDIA, NOTAS DE VOZ EN FORMATO MP3]
+  - **POST:** [NOTAA DE VOZ MP3]
+  - **UPDATE:** [CHAT SE ACTULIZA CADA SEGUNDO PARA MOSTAR EL AUDIO]
+  - **DELETE:** [BORRAR FOTO DE PERFIL EL USUARIUO PUEDE HACER ESO]
+- **Sensor Integrado:** [MICROFONO]
+  - Uso: [PERMITE AL USUARIO GRABAR LA NOTA DE VOZ QUE SE ENVIARA POR EL CHAT A SU CONTACTO]
+- **Persistencia local:** [EL REGISTRO DEL CHAT Y SUS NOTAS DE VOZ ENVIADAS SE GUARDAN LOCALMENTE Y SE ENVIAN IGUAL AL SERVIDOR]
 - **Gestión de dependencias:** [Gradle / Koin / Hilt — describe si aplica]
-- **Pruebas:** [Unitarias / Instrumentation — describe alcance si corresponde]
-
 ---
-
 ## Flujo de la Aplicación (breve)
-
 1. Pantalla de inicio / autenticación (si aplica).
 2. Lista / consulta de recursos vía API (GET).
 3. Crear / editar / eliminar recursos (POST / PUT / DELETE).
 4. Uso del sensor para [funcionalidad concreta].
 5. Almacenamiento local y sincronización con servidor.
-
 ---
 
+
+
+
 ## Capturas de Pantalla
-
 Coloca al menos 3 imágenes en la carpeta `/docs` o en el README con rutas relativas o URLs públicas.
-
 | Pantalla de Inicio | Operación CRUD | Uso del Sensor |
 | :---: | :---: | :---: |
-| ![Inicio](docs/screenshot_inicio.png) | ![CRUD](docs/screenshot_crud.png) | ![Sensor](docs/screenshot_sensor.png) |
-
+| ![) | ![CRUD](docs/screenshot_crud.png) | ![Sensor](docs/screenshot_sensor.png) |
 (Actualiza las rutas e imágenes según las capturas reales del proyecto.)
-
 ---
 
 ## Instalación y Releases
