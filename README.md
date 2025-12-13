@@ -55,11 +55,16 @@ Este proyecto ha sido desarrollado siguiendo estrictamente los lineamientos de l
 
 
 
+
+
 ## Capturas de Pantalla
 Coloca al menos 3 imágenes en la carpeta `/docs` o en el README con rutas relativas o URLs públicas.
 | Pantalla de Inicio | Operación CRUD | Uso del Sensor |
 | :---: | :---: | :---: |
-| ![) | ![CRUD](docs/screenshot_crud.png) | ![Sensor](docs/screenshot_sensor.png) |
+| ![ 
+![Imagen de WhatsApp 2025-12-12 a las 19 11 25_2a51ea48](https://github.com/user-attachments/assets/aeb3edd7-5d92-4266-aa7e-d86bc00f7d3f)
+) | ![![Imagen de WhatsApp 2025-12-12 a las 19 11 25_4bea5cea](https://github.com/user-attachments/assets/92919cde-aa09-41ce-ac58-fbfd1fff63df)) | ![Sensor](docs/screenshot_sensor.png) |
+) |
 (Actualiza las rutas e imágenes según las capturas reales del proyecto.)
 ---
 
