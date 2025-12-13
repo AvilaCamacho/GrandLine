@@ -13,11 +13,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import android.content.Context
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mx.edu.utez.R
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -64,6 +70,16 @@ fun LoginScreen(viewModel: LoginViewModel, onLoginSuccess: () -> Unit) {
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)) {
+            Image(
+                painter = painterResource(id = R.drawable.vetlogo),
+                contentDescription = "Avatar",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
             Column(
                 modifier = Modifier
                     .fillMaxSize()
