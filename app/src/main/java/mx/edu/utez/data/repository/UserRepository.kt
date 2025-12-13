@@ -136,4 +136,36 @@ class UserRepository(private val remote: RemoteDataSource, private val tokenMana
             Result.failure(e)
         }
     }
+
+    /**
+     * Delete audio from a message
+     */
+    suspend fun deleteAudio(messageId: Long): Result<Message> {
+        return try {
+            val token = tokenManager?.getToken() ?: return Result.failure(Exception("No token available"))
+            val res = remote.deleteAudio(messageId, token)
+            if (res.isSuccess) {
+                val msgResp = res.getOrNull()
+                if (msgResp != null) {
+                    // Map MessageResponse to Message
+                    val message = Message(
+                        id = msgResp.id ?: 0L,
+                        senderId = msgResp.sender_id ?: 0L,
+                        receiverId = msgResp.receiver_id ?: 0L,
+                        audioUrl = msgResp.audio_url,
+                        mediaUrl = msgResp.media_url,
+                        textNote = msgResp.text_note,
+                        timestamp = msgResp.timestamp
+                    )
+                    Result.success(message)
+                } else {
+                    Result.failure(Exception("No message returned"))
+                }
+            } else {
+                Result.failure(res.exceptionOrNull() ?: Exception("Delete audio failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

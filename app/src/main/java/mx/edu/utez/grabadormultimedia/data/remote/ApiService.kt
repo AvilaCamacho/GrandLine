@@ -53,4 +53,61 @@ interface ApiService {
 
     @GET("/media/media/{message_id}")
     suspend fun downloadMedia(@Path("message_id") messageId: Long): Response<ResponseBody>
+
+    // Delete audio from message (preferred method)
+    @DELETE("/media/audio/{message_id}")
+    suspend fun deleteAudio(
+        @Path("message_id") messageId: Long,
+        @Header("Authorization") token: String
+    ): Response<MessageResponse>
+
+    // Delete audio from message (fallback POST method)
+    @POST("/media/audio/{message_id}/delete")
+    suspend fun deleteAudioPost(
+        @Path("message_id") messageId: Long,
+        @Header("Authorization") token: String
+    ): Response<MessageResponse>
+
+    // Get user by ID
+    @GET("/users/{user_id}")
+    suspend fun getUser(
+        @Path("user_id") userId: Long,
+        @Header("Authorization") token: String
+    ): Response<Map<String, Any?>>
+
+    // Update user (preferred PATCH method)
+    @Multipart
+    @PATCH("/users/{user_id}")
+    suspend fun updateUser(
+        @Path("user_id") userId: Long,
+        @Header("Authorization") token: String,
+        @Part("username") username: RequestBody?,
+        @Part("email") email: RequestBody?,
+        @Part("password") password: RequestBody?,
+        @Part profile_picture: MultipartBody.Part?
+    ): Response<Map<String, Any?>>
+
+    // Update user (fallback PUT method)
+    @Multipart
+    @PUT("/users/{user_id}")
+    suspend fun updateUserPut(
+        @Path("user_id") userId: Long,
+        @Header("Authorization") token: String,
+        @Part("username") username: RequestBody?,
+        @Part("email") email: RequestBody?,
+        @Part("password") password: RequestBody?,
+        @Part profile_picture: MultipartBody.Part?
+    ): Response<Map<String, Any?>>
+
+    // Update user (fallback POST method)
+    @Multipart
+    @POST("/users/{user_id}")
+    suspend fun updateUserPost(
+        @Path("user_id") userId: Long,
+        @Header("Authorization") token: String,
+        @Part("username") username: RequestBody?,
+        @Part("email") email: RequestBody?,
+        @Part("password") password: RequestBody?,
+        @Part profile_picture: MultipartBody.Part?
+    ): Response<Map<String, Any?>>
 }
