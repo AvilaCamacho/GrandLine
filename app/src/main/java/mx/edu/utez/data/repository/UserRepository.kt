@@ -147,14 +147,18 @@ class UserRepository(private val remote: RemoteDataSource, private val tokenMana
             if (res.isSuccess) {
                 val msgResp = res.getOrNull()
                 if (msgResp != null) {
+                    // Validate required fields
+                    if (msgResp.id == null || msgResp.senderId == null || msgResp.receiverId == null) {
+                        return Result.failure(Exception("Invalid response: missing required fields"))
+                    }
                     // Map MessageResponse to Message
                     val message = Message(
-                        id = msgResp.id ?: 0L,
-                        senderId = msgResp.sender_id ?: 0L,
-                        receiverId = msgResp.receiver_id ?: 0L,
-                        audioUrl = msgResp.audio_url,
-                        mediaUrl = msgResp.media_url,
-                        textNote = msgResp.text_note,
+                        id = msgResp.id,
+                        senderId = msgResp.senderId,
+                        receiverId = msgResp.receiverId,
+                        audioUrl = msgResp.audioUrl,
+                        mediaUrl = msgResp.mediaUrl,
+                        textNote = msgResp.textNote,
                         timestamp = msgResp.timestamp
                     )
                     Result.success(message)
