@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package mx.edu.utez.ui.screens
 
 import android.net.Uri
@@ -23,6 +25,8 @@ import mx.edu.utez.viewmodel.HomeViewModelFactory
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.HorizontalDivider
 import androidx.navigation.NavController
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -39,43 +43,54 @@ fun HomeScreen(navController: NavController) {
 
     LaunchedEffect(Unit) { viewModel.loadUsers() }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (loading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        } else {
-            Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-                users.forEach { user ->
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable { navController.navigate("chat/${user.id}/${Uri.encode(user.username)}") }, verticalAlignment = Alignment.CenterVertically) {
-                        val painter = rememberAsyncImagePainter(user.profilePictureUrl)
-                        Image(
-                            painter = painter,
-                            contentDescription = "avatar",
-                            modifier = Modifier.size(56.dp).clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(user.username)
-                            Text(user.email, style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                    HorizontalDivider()
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(
+            title = { Text("Home") },
+            actions = {
+                IconButton(onClick = { navController.navigate("profile") }) {
+                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Perfil")
                 }
             }
-        }
+        )
+    }) { padding ->
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+            if (loading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else {
+                Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+                    users.forEach { user ->
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .clickable { navController.navigate("chat/${user.id}/${Uri.encode(user.username)}") }, verticalAlignment = Alignment.CenterVertically) {
+                            val painter = rememberAsyncImagePainter(user.profilePictureUrl)
+                            Image(
+                                painter = painter,
+                                contentDescription = "avatar",
+                                modifier = Modifier.size(56.dp).clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(user.username)
+                                Text(user.email, style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                        HorizontalDivider()
+                    }
+                }
 
-        // FAB centrado abajo
-        FloatingActionButton(
-            onClick = { /* abrir pantalla nuevo chat */ },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp),
-            containerColor = MaterialTheme.colorScheme.primary
-        ) {
-            Text("+")
+                // FAB centrado abajo
+                FloatingActionButton(
+                    onClick = { /* abrir pantalla nuevo chat */ },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 24.dp),
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Text("+")
+                }
+            }
         }
     }
 }

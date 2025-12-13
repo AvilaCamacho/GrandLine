@@ -4,7 +4,6 @@ import android.media.MediaPlayer
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mx.edu.utez.data.model.Message
@@ -22,7 +20,6 @@ import mx.edu.utez.data.repository.UserRepository
 import mx.edu.utez.grabadormultimedia.data.remote.RemoteDataSource
 import mx.edu.utez.grabadormultimedia.data.remote.RetrofitClient
 import mx.edu.utez.data.storage.TokenManager
-import mx.edu.utez.viewmodel.HomeViewModelFactory
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -33,12 +30,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.draw.clip
+import androidx.navigation.NavController
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(receiverId: Long, receiverName: String) {
+fun ChatScreen(navController: NavController, receiverId: Long, receiverName: String) {
     val context = LocalContext.current
     val api = RetrofitClient.apiService
     val remote = RemoteDataSource(api)
@@ -68,6 +66,11 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
 
     val listState = rememberLazyListState()
 
+    // Estado para editar mensaje
+    var editingMessage by remember { mutableStateOf<Message?>(null) }
+    var editingText by remember { mutableStateOf("") }
+    var showEditDialog by remember { mutableStateOf(false) }
+
     fun loadMessages() {
         scope.launch {
             loadingMsgs = true
@@ -84,7 +87,7 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
     fun formatSeconds(sec: Int): String {
         val m = sec / 60
         val s = sec % 60
-        return String.format("%02d:%02d", m, s)
+        return String.format(Locale.getDefault(), "%02d:%02d", m, s)
     }
 
     // scroll to bottom when messages change
@@ -144,12 +147,12 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
                             .background(if (isMine) Color(0xFFDCF8C6) else Color.White, RoundedCornerShape(12.dp))
                             .padding(12.dp)) {
 
+                            // Texto
                             msg.textNote?.let { Text(it) }
 
+                            // Audio
                             msg.audioUrl?.let { url ->
                                 // control play/pause y duración
-                                val duration = messageDurations[msg.id] ?: 0
-                                val progress = messageProgress[msg.id] ?: 0
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Button(onClick = {
                                         scope.launch {
@@ -207,11 +210,47 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Column {
                                         // simple progress text
-                                        Text(if (messageDurations[msg.id] ?: 0 > 0) {
-                                            "${formatSeconds(messageProgress[msg.id] ?: 0)} / ${formatSeconds(messageDurations[msg.id] ?: 0)}"
+                                        val dur = messageDurations[msg.id] ?: 0
+                                        Text(if ((dur) > 0) {
+                                            "${formatSeconds(messageProgress[msg.id] ?: 0)} / ${formatSeconds(dur)}"
                                         } else {
                                             "00:00"
                                         })
+                                    }
+
+                                    // Si es mi mensaje, botones para borrar audio y editar
+                                    if (isMine) {
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        TextButton(onClick = {
+                                            // llamar deleteAudio
+                                            scope.launch {
+                                                val res = repo.deleteAudio(msg.id)
+                                                if (res.isSuccess) {
+                                                    snackbarHost.showSnackbar("Audio eliminado")
+                                                    loadMessages()
+                                                } else {
+                                                    val err = res.exceptionOrNull()?.message ?: "Error al eliminar audio"
+                                                    // Mostrar versión corta y limpia del error
+                                                    val clean = err.replace(Regex("<[^>]+>"), " ").replace(Regex("\\s+"), " ").trim()
+                                                    val short = if (clean.length > 200) clean.substring(0, 200) + "..." else clean
+                                                    snackbarHost.showSnackbar(short)
+                                                    // log detallado
+                                                    android.util.Log.d("ChatScreen", "Delete audio error full: $err")
+                                                }
+                                            }
+                                        }) {
+                                            Text("Borrar audio")
+                                        }
+
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        TextButton(onClick = {
+                                            // abrir dialogo de edición de texto
+                                            editingMessage = msg
+                                            editingText = msg.textNote ?: ""
+                                            showEditDialog = true
+                                        }) {
+                                            Text("Editar")
+                                        }
                                     }
                                 }
                             }
@@ -220,6 +259,40 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
                         }
                     }
                 }
+            }
+
+            // Dialogo de edición simple (solo texto)
+            if (showEditDialog && editingMessage != null) {
+                AlertDialog(onDismissRequest = { showEditDialog = false; editingMessage = null }, title = { Text("Editar mensaje") }, text = {
+                    Column {
+                        OutlinedTextField(value = editingText, onValueChange = { editingText = it }, label = { Text("Texto") }, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Puedes también adjuntar nuevo audio o media (no implementado en diálogo).", style = MaterialTheme.typography.bodySmall)
+                    }
+                }, confirmButton = {
+                    TextButton(onClick = {
+                        // Guardar cambios: llamar updateMessage
+                        val msgToUpdate = editingMessage
+                        if (msgToUpdate != null) {
+                            scope.launch {
+                                val res = repo.updateMessage(msgToUpdate.id, textNote = editingText)
+                                if (res.isSuccess) {
+                                    snackbarHost.showSnackbar("Mensaje actualizado")
+                                    loadMessages()
+                                } else {
+                                    snackbarHost.showSnackbar(res.exceptionOrNull()?.message ?: "Error al actualizar mensaje")
+                                }
+                                showEditDialog = false
+                                editingMessage = null
+                            }
+                        } else {
+                            showEditDialog = false
+                            editingMessage = null
+                        }
+                    }) { Text("Guardar") }
+                }, dismissButton = {
+                    TextButton(onClick = { showEditDialog = false; editingMessage = null }) { Text("Cancelar") }
+                })
             }
 
             // controles grabar / enviar
@@ -271,7 +344,7 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
                             val senderRb = currentUserId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
                             val receiverRb = receiverId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
-                            val res = remote.sendMessage(senderRb, receiverRb, audioPart, null, null)
+                            val res = repo.sendMessage(senderRb, receiverRb, audioPart, null, null)
                             if (res.isSuccess) {
                                 snackbarHost.showSnackbar("Mensaje enviado")
                                 // borrar archivo temporal
@@ -289,6 +362,11 @@ fun ChatScreen(receiverId: Long, receiverName: String) {
                     }
                 }) {
                     Text("Enviar")
+                }
+
+                // Nuevo: botón actualizar chat
+                Button(onClick = { loadMessages() }) {
+                    Text("Actualizar chat")
                 }
             }
         }

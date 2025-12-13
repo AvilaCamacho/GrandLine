@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import mx.edu.utez.ui.screens.LoginScreen
 import mx.edu.utez.ui.screens.HomeScreen
 import mx.edu.utez.ui.screens.ChatScreen
+import mx.edu.utez.ui.screens.ProfileScreen
 import mx.edu.utez.viewmodel.LoginViewModel
 import mx.edu.utez.viewmodel.LoginViewModelFactory
 
@@ -27,7 +28,10 @@ fun Navigation(loginViewModelFactory: LoginViewModelFactory) {
         composable("chat/{userId}/{username}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")?.toLongOrNull() ?: -1L
             val username = backStackEntry.arguments?.getString("username") ?: "Usuario"
-            ChatScreen(receiverId = userId, receiverName = username)
+            ChatScreen(navController = navController, receiverId = userId, receiverName = username)
+        }
+        composable("profile") {
+            ProfileScreen(navController = navController)
         }
     }
 }
